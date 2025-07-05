@@ -41,7 +41,7 @@ PetLoveCommunity/
 - **Backend**: ASP.NET Core 9.0
 - **Database**: PostgreSQL 15+ with Entity Framework Core
 - **Authentication**: JWT with OAuth 2.0 (Google, Facebook, Apple)
-- **Real-time**: SignalR for notification0.s
+- **Real-time**: SignalR for notifications
 - **AI Integration**: OpenAI API for chatbot
 - **Cloud**: Microsoft Azure (App Service, Database, Blob Storage)
 - **Testing**: xUnit, Moq, Entity Framework InMemory
