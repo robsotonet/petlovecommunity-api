@@ -7,7 +7,7 @@ namespace PetLoveCommunity.API.Configuration;
 /// </summary>
 public class DatabaseCredentials : IDatabaseCredentials
 {
-    public const string SectionName = "Database";
+    public const string SectionName = "DatabaseCredentials";
     
     /// <summary>
     /// The username for database connection.

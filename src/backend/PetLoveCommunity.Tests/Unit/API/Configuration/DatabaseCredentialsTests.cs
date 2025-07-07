@@ -174,7 +174,7 @@ public class DatabaseCredentialsTests
     public void SectionName_ShouldBeCorrect()
     {
         // Assert
-        DatabaseCredentials.SectionName.Should().Be("Database");
+        DatabaseCredentials.SectionName.Should().Be("DatabaseCredentials");
     }
 
     [Fact]
@@ -183,9 +183,9 @@ public class DatabaseCredentialsTests
         // Arrange
         var configData = new Dictionary<string, string>
         {
-            ["Database:Username"] = "testuser",
-            ["Database:Password"] = "testpassword123",
-            ["Database:DatabaseName"] = "testdatabase"
+            ["DatabaseCredentials:Username"] = "testuser",
+            ["DatabaseCredentials:Password"] = "testpassword123",
+            ["DatabaseCredentials:DatabaseName"] = "testdatabase"
         };
 
         var configuration = new ConfigurationBuilder()
