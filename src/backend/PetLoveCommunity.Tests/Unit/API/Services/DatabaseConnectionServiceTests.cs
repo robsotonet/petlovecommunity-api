@@ -1,7 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
-using PetLoveCommunity.API.Configuration;
+using PetLoveCommunity.Application.Configuration;
 using PetLoveCommunity.API.Services;
 
 namespace PetLoveCommunity.Tests.Unit.API.Services;

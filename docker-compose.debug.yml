@@ -1,0 +1,66 @@
+# docker-compose.debug.yml
+# Database-only services for local API debugging
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: petlove-db-debug
+    environment:
+      POSTGRES_DB: petlove_dev
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/Developer/Data/Postgres/PetLove:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - petlove-debug-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d petlove_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: petlove-redis-debug
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_debug_data:/data
+    networks:
+      - petlove-debug-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: petlove-pgadmin-debug
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@petlove.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - petlove-debug-network
+    volumes:
+      - pgadmin_debug_data:/var/lib/pgadmin
+
+volumes:
+  redis_debug_data:
+  pgadmin_debug_data:
+
+networks:
+  petlove-debug-network:
+    driver: bridge

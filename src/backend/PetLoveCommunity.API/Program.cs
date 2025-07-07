@@ -1,11 +1,22 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using PetLoveCommunity.API.Configuration;
+using PetLoveCommunity.Application.Configuration;
 using PetLoveCommunity.API.Services;
+using PetLoveCommunity.Infrastructure;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Enhanced logging configuration for debugging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Logging.SetMinimumLevel(LogLevel.Debug);
+}
 
 // Configure JWT settings
 var jwtSettings = new JwtSettings();
@@ -30,6 +41,9 @@ builder.Services.AddSingleton<IDatabaseAdminCredentials>(provider =>
 // Register services
 builder.Services.AddSingleton<IConfigurationValidator, ConfigurationValidator>();
 builder.Services.AddSingleton<IDatabaseConnectionService, DatabaseConnectionService>();
+
+// Add Infrastructure services
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -60,6 +74,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Add request logging middleware for debugging
+if (app.Environment.IsDevelopment())
+{
+    app.Use(async (context, next) =>
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogDebug("Request: {Method} {Path}", context.Request.Method, context.Request.Path);
+        await next();
+        logger.LogDebug("Response: {StatusCode}", context.Response.StatusCode);
+    });
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
