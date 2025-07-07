@@ -17,6 +17,9 @@ public class ConfigurationValidator : IConfigurationValidator
     /// <exception cref="InvalidOperationException">Thrown when validation fails.</exception>
     public void ValidateAndThrow<T>(T instance, string configurationName) where T : class
     {
+        if (instance == null) throw new ArgumentNullException(nameof(instance));
+        if (string.IsNullOrWhiteSpace(configurationName)) throw new ArgumentNullException(nameof(configurationName));
+        
         var validationResults = Validate(instance);
         
         if (validationResults.Any())
@@ -37,6 +40,8 @@ public class ConfigurationValidator : IConfigurationValidator
     /// <returns>A collection of validation results. Empty if validation passes.</returns>
     public IEnumerable<ValidationResult> Validate<T>(T instance) where T : class
     {
+        if (instance == null) throw new ArgumentNullException(nameof(instance));
+        
         var validationContext = new ValidationContext(instance);
         var validationResults = new List<ValidationResult>();
         
