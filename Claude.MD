@@ -1,7 +1,58 @@
 # Pet Love Community - Backend API Development Guide
 
 ## Project Overview
-Backend API development for Pet Love Community using ASP.NET Core 8.0, PostgreSQL, and Entity Framework Core. This guide focuses on building a robust, scalable API with authentication, pet adoption, event management, and marketplace features.
+Backend API development for Pet Love Community using ASP.NET Core 9.0, PostgreSQL, and Entity Framework Core. This guide focuses on building a robust, scalable API with authentication, pet adoption, event management, and marketplace features following Clean Architecture principles.
+
+## Standard Workflow
+1. **Analysis & Planning**: First think through the problem, read the codebase for relevant files, and write a plan to `tasks/todo.md`. Create this file if it does not exist yet, otherwise update if it does exist.
+2. **Task Management**: The plan should have a list of todo items that you can check off as you complete them
+3. **Approval Process**: Before you begin working, check in with me and I will verify the plan
+4. **Implementation**: Then, begin working on the todo items, marking them as complete as you go
+5. **Progress Updates**: Please every step of the way just give me a high level explanation of what changes you made
+6. **Simplicity First**: Make every task and code change you do as simple as possible. We want to avoid making any massive or complex changes. Every change should impact as little code as possible. Everything is about simplicity.
+7. **Documentation**: Finally, add a review section to the todo.md file with a summary of the changes you made and any other relevant information
+
+## Code Quality Standards
+
+### Clean Architecture Principles
+- **Separation of Concerns**: Each layer should have a single responsibility
+- **Dependency Inversion**: High-level modules should not depend on low-level modules
+- **Testability**: All code should be easily testable with unit tests
+- **SOLID Principles**: Follow Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion
+
+### Architecture Layers
+```
+src/backend/
+├── PetLoveCommunity.API/           # Presentation Layer (Controllers, Middleware)
+├── PetLoveCommunity.Application/   # Application Layer (Services, DTOs, Interfaces)
+├── PetLoveCommunity.Domain/        # Domain Layer (Entities, Value Objects, Domain Services)
+├── PetLoveCommunity.Infrastructure/ # Infrastructure Layer (Data Access, External Services)
+└── PetLoveCommunity.Tests/         # Test Projects (Unit, Integration, End-to-End)
+```
+
+### Testing Requirements
+- **Unit Test Coverage**: Minimum 80% code coverage for all business logic
+- **Test Naming**: Use descriptive test names following `Given_When_Then` pattern
+- **Test Categories**:
+    - Unit Tests: Test individual components in isolation
+    - Integration Tests: Test interaction between components
+    - End-to-End Tests: Test complete user scenarios
+- **Test Framework**: xUnit with Moq for mocking, FluentAssertions for assertions
+
+### Code Standards
+- **Naming Conventions**: Follow C# naming conventions (PascalCase for classes/methods, camelCase for variables)
+- **Method Size**: Keep methods small (max 20 lines)
+- **Class Size**: Keep classes focused (max 200 lines)
+- **Cyclomatic Complexity**: Keep methods simple (max complexity of 10)
+- **Documentation**: XML comments for public APIs, inline comments for complex logic
+- **Error Handling**: Always handle exceptions appropriately with meaningful error messages
+
+### Development Practices
+- **Version Control**: Use feature branches with descriptive names
+- **Code Reviews**: All code must be reviewed before merging
+- **Continuous Integration**: All tests must pass before merging
+- **Refactoring**: Regularly refactor to improve code quality
+- **Performance**: Consider performance implications of all changes
 
 ## Development Environment Setup
 
@@ -30,11 +81,19 @@ PetLoveCommunity/
 ├── README.md                   # Project documentation
 ├── .gitignore                  # Git ignore rules
 ├── scripts/                    # Database and deployment scripts
+├── tasks/                      # Task management and todo lists
+│   ├── todo.md                 # Current task list
+│   ├── completed.md            # Completed tasks archive
+│   └── reviews.md              # Task review summaries
 └── src/backend/
-    ├── PetLoveCommunity.API/           # Web API project
-    ├── PetLoveCommunity.Core/          # Domain models and interfaces
-    ├── PetLoveCommunity.Infrastructure/ # Data access and external services
-    └── PetLoveCommunity.Tests/         # Unit and integration tests
+    ├── PetLoveCommunity.API/           # Web API project (Presentation Layer)
+    ├── PetLoveCommunity.Application/   # Application Layer (Services, DTOs)
+    ├── PetLoveCommunity.Domain/        # Domain Layer (Entities, Business Logic)
+    ├── PetLoveCommunity.Infrastructure/ # Infrastructure Layer (Data Access)
+    └── PetLoveCommunity.Tests/         # Test Projects
+        ├── Unit/                       # Unit tests
+        ├── Integration/                # Integration tests
+        └── EndToEnd/                   # End-to-end tests
 ```
 
 ## Technology Stack
@@ -44,21 +103,23 @@ PetLoveCommunity/
 - **Real-time**: SignalR for notifications
 - **AI Integration**: OpenAI API for chatbot
 - **Cloud**: Microsoft Azure (App Service, Database, Blob Storage)
-- **Testing**: xUnit, Moq, Entity Framework InMemory
-- **IDE**: JetBrains Rider with .NET 8.0 support
+- **Testing**: xUnit, Moq, FluentAssertions, Entity Framework InMemory
+- **IDE**: JetBrains Rider with .NET 9.0 support
+- **Architecture**: Clean Architecture with CQRS pattern using MediatR
 
 ## Git Workflow
 
 ### Repository Setup
 1. Create GitHub repository: `pet-love-community`
-2. Clone locally: `git clone https://github.com/yourusername/pet-love-community.git`
+2. Clone locally: `git clone https://github.com/robsotonet/petlovecommunity-api`
 3. Set up development branch: `git checkout -b develop`
 
 ### Branch Strategy
 - `main`: Production releases
 - `develop`: Development integration
-- `feature/`: Feature development
-- `hotfix/`: Production fixes
+- `feature/`: Feature development (e.g., `feature/user-authentication`)
+- `hotfix/`: Production fixes (e.g., `hotfix/security-patch`)
+- `task/`: Individual task implementation (e.g., `task/setup-001-dev-environment`)
 
 ### Commit Convention
 ```
@@ -66,6 +127,8 @@ feat: add user authentication
 fix: resolve database connection issue
 docs: update API documentation
 test: add integration tests for pet endpoints
+refactor: improve pet service performance
+chore: update dependencies
 ```
 
 ## Database Schema
@@ -87,13 +150,39 @@ test: add integration tests for pet endpoints
 - Event → Bookings (one-to-many)
 - Post → Comments (one-to-many)
 
+## Task Management System
+
+### Task Categories
+- **SETUP**: Development environment and infrastructure setup
+- **ARCH**: Architecture and design decisions
+- **BACKEND**: Core backend functionality
+- **TEST**: Testing implementation
+- **DEPLOY**: Deployment and CI/CD
+- **REFACTOR**: Code improvement and optimization
+- **DOCS**: Documentation updates
+
+### Task Naming Convention
+```
+[CATEGORY]-[NUMBER]: [Brief Description]
+Example: SETUP-001: Development Environment Setup
+```
+
+### Task Lifecycle
+1. **Created**: Task identified and documented
+2. **Planned**: Task broken down into subtasks
+3. **In Progress**: Task being worked on
+4. **Testing**: Task implementation being tested
+5. **Review**: Task under code review
+6. **Completed**: Task finished and merged
+7. **Archived**: Task moved to completed.md
+
 ## Development Phases
 
 ### Phase 1: Foundation (Weeks 1-4)
 **Priority**: Critical - Must be completed first
 
 #### SETUP-001: Development Environment
-- [x] .NET 8.0 SDK installation
+- [x] .NET 9.0 SDK installation
 - [x] Docker Desktop setup
 - [x] PostgreSQL 15+ local instance
 - [x] JetBrains Rider configuration
@@ -107,6 +196,13 @@ test: add integration tests for pet endpoints
 - [x] Environment configuration files
 - [x] CI/CD pipeline setup
 
+#### ARCH-001: Clean Architecture Setup
+- [ ] Define layer boundaries and dependencies
+- [ ] Create project structure following Clean Architecture
+- [ ] Set up dependency injection container
+- [ ] Implement base classes and interfaces
+- [ ] Create folder structure for each layer
+
 #### SETUP-003: Database Schema
 - [ ] PostgreSQL database design
 - [ ] Entity Framework models
@@ -118,7 +214,7 @@ test: add integration tests for pet endpoints
 **Priority**: Critical - Core functionality
 
 #### BACKEND-001: Infrastructure Setup
-- [ ] ASP.NET Core 8.0 foundation
+- [ ] ASP.NET Core 9.0 foundation
 - [ ] Dependency injection configuration
 - [ ] Entity Framework Core with PostgreSQL
 - [ ] CORS policies configuration
@@ -172,7 +268,7 @@ test: add integration tests for pet endpoints
 ### Phase 4: Testing & Deployment (Weeks 13-16)
 **Priority**: High - Quality and launch
 
-#### QA-001: Testing Suite
+#### TEST-001: Testing Suite
 - [ ] Unit tests for all services
 - [ ] Integration tests for APIs
 - [ ] Performance testing
@@ -323,10 +419,12 @@ GET    /api/bookings/{id}        # Get booking details
 
 ### Development Workflow
 1. Create feature branch: `git checkout -b feature/user-authentication`
-2. Implement feature with tests
-3. Run tests: `dotnet test`
-4. Create pull request to `develop`
-5. Code review and merge
+2. Update tasks/todo.md with specific tasks
+3. Implement feature with tests
+4. Run tests: `dotnet test`
+5. Create pull request to `develop`
+6. Code review and merge
+7. Update tasks/completed.md
 
 ## Business Logic Rules
 
@@ -385,6 +483,7 @@ claude-code
 "Add unit tests for the pet adoption service"
 "Set up Entity Framework migrations"
 "Create the database schema based on the requirements"
+"Review current codebase and create tasks for next sprint"
 ```
 
 ### Best Practices
@@ -392,14 +491,15 @@ claude-code
 - Use checkboxes to track completed tasks
 - Include relevant code snippets and examples
 - Document any deviations from the original plan
+- Follow the Standard Workflow for all changes
 
 ## Next Steps
 
 ### Immediate Actions
-1. **SETUP-001**: Complete development environment setup
-2. **SETUP-002**: Initialize project structure
-3. **SETUP-003**: Design and implement database schema
-4. **BACKEND-001**: Set up core infrastructure
+1. **Create Tasks Folder**: Set up the tasks/ directory structure
+2. **Current State Review**: Analyze existing codebase and update progress
+3. **Task Planning**: Create detailed todo.md with immediate next steps
+4. **Architecture Review**: Ensure Clean Architecture principles are followed
 
 ### Development Process
 1. Start with Phase 1: Foundation
@@ -413,6 +513,7 @@ claude-code
 - Maintain API documentation
 - Keep deployment guides current
 - Document architectural decisions
+- Update task management files regularly
 
 ---
 
