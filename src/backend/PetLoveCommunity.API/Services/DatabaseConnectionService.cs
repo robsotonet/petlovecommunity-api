@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
+using Npgsql;
 using PetLoveCommunity.API.Configuration;
-using System.Text;
 
 namespace PetLoveCommunity.API.Services;
 
@@ -31,21 +31,30 @@ public class DatabaseConnectionService : IDatabaseConnectionService
 
     public string GetConnectionString(string databaseName)
     {
-        var connectionString = new StringBuilder();
-        
-        connectionString.Append($"Host={_settings.Host};");
-        connectionString.Append($"Port={_settings.Port};");
-        connectionString.Append($"Database={databaseName};");
-        connectionString.Append($"Username={_credentials.Username};");
-        connectionString.Append($"Password={_credentials.Password};");
-        connectionString.Append($"Timeout={_settings.Timeout};");
-        connectionString.Append($"Maximum Pool Size={_settings.MaxPoolSize};");
-        connectionString.Append($"Minimum Pool Size={_settings.MinPoolSize};");
-        connectionString.Append($"SSL Mode={_settings.SslMode};");
-        connectionString.Append($"Include Error Detail={_settings.IncludeErrorDetail};");
-        connectionString.Append($"Command Timeout={_settings.CommandTimeout};");
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = _settings.Host,
+            Port = _settings.Port,
+            Database = databaseName,
+            Username = _credentials.Username,
+            Password = _credentials.Password,
+            Timeout = _settings.Timeout,
+            MaxPoolSize = _settings.MaxPoolSize,
+            MinPoolSize = _settings.MinPoolSize,
+            SslMode = Enum.Parse<SslMode>(_settings.SslMode),
+            IncludeErrorDetail = _settings.IncludeErrorDetail,
+            CommandTimeout = _settings.CommandTimeout
+        };
 
-        return connectionString.ToString();
+        var connectionString = builder.ConnectionString;
+        
+        // Ensure trailing semicolon for consistency with previous behavior
+        if (!connectionString.EndsWith(";"))
+        {
+            connectionString += ";";
+        }
+        
+        return connectionString;
     }
 
     private void ValidateConfiguration()

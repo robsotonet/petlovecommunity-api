@@ -152,17 +152,17 @@ public class DatabaseConnectionServiceTests
         var connectionString = service.GetConnectionString();
 
         // Assert
-        connectionString.Should().Contain("Host=prod-server.example.com;");
-        connectionString.Should().Contain("Port=5433;");
-        connectionString.Should().Contain("Database=production_db;");
-        connectionString.Should().Contain("Username=prod_user;");
-        connectionString.Should().Contain("Password=complex!Password123;");
-        connectionString.Should().Contain("Timeout=60;");
-        connectionString.Should().Contain("Maximum Pool Size=50;");
-        connectionString.Should().Contain("Minimum Pool Size=10;");
-        connectionString.Should().Contain("SSL Mode=Require;");
-        connectionString.Should().Contain("Include Error Detail=False;");
-        connectionString.Should().Contain("Command Timeout=45;");
+        connectionString.Should().Contain("Host=prod-server.example.com");
+        connectionString.Should().Contain("Port=5433");
+        connectionString.Should().Contain("Database=production_db");
+        connectionString.Should().Contain("Username=prod_user");
+        connectionString.Should().Contain("Password=complex!Password123");
+        connectionString.Should().Contain("Timeout=60");
+        connectionString.Should().Contain("Maximum Pool Size=50");
+        connectionString.Should().Contain("Minimum Pool Size=10");
+        connectionString.Should().Contain("SSL Mode=Require");
+        connectionString.Should().Contain("Include Error Detail=False");
+        connectionString.Should().Contain("Command Timeout=45");
     }
 
     [Fact]
