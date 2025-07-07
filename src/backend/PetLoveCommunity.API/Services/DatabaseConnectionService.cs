@@ -41,7 +41,7 @@ public class DatabaseConnectionService : IDatabaseConnectionService
             Timeout = _settings.Timeout,
             MaxPoolSize = _settings.MaxPoolSize,
             MinPoolSize = _settings.MinPoolSize,
-            SslMode = Enum.Parse<SslMode>(_settings.SslMode),
+            SslMode = Enum.TryParse<SslMode>(_settings.SslMode, true, out var sslMode) ? sslMode : SslMode.Prefer,
             IncludeErrorDetail = _settings.IncludeErrorDetail,
             CommandTimeout = _settings.CommandTimeout
         };
