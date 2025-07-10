@@ -14,7 +14,7 @@ public class PetRepository : Repository<Pet>, IPetRepository
     public async Task<IEnumerable<Pet>> GetAvailablePetsAsync(CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Where(p => p.Status == PetStatus.Available && p.ExpiresAt > DateTime.UtcNow)
+            .Where(p => p.AdoptionStatus == AdoptionStatus.Available && p.IsActive)
             .Include(p => p.Owner)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync(cancellationToken);
@@ -32,7 +32,7 @@ public class PetRepository : Repository<Pet>, IPetRepository
     public async Task<IEnumerable<Pet>> GetPetsByTypeAsync(PetType type, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Where(p => p.Type == type && p.Status == PetStatus.Available)
+            .Where(p => p.PetType == type && p.AdoptionStatus == AdoptionStatus.Available && p.IsActive)
             .Include(p => p.Owner)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync(cancellationToken);
@@ -49,11 +49,10 @@ public class PetRepository : Repository<Pet>, IPetRepository
     public async Task<IEnumerable<Pet>> SearchPetsAsync(
         string searchTerm, 
         PetType? type = null, 
-        PetSize? size = null, 
         CancellationToken cancellationToken = default)
     {
         var query = _dbSet
-            .Where(p => p.Status == PetStatus.Available && p.ExpiresAt > DateTime.UtcNow)
+            .Where(p => p.AdoptionStatus == AdoptionStatus.Available && p.IsActive)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -61,17 +60,12 @@ public class PetRepository : Repository<Pet>, IPetRepository
             query = query.Where(p => 
                 p.Name.Contains(searchTerm) || 
                 p.Breed.Contains(searchTerm) ||
-                p.Description!.Contains(searchTerm));
+                p.Description.Contains(searchTerm));
         }
 
         if (type.HasValue)
         {
-            query = query.Where(p => p.Type == type.Value);
-        }
-
-        if (size.HasValue)
-        {
-            query = query.Where(p => p.Size == size.Value);
+            query = query.Where(p => p.PetType == type.Value);
         }
 
         return await query
@@ -80,10 +74,12 @@ public class PetRepository : Repository<Pet>, IPetRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Pet>> GetExpiredListingsAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Pet>> GetPetsByStatusAsync(AdoptionStatus status, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Where(p => p.ExpiresAt <= DateTime.UtcNow && p.Status != PetStatus.Expired)
+            .Where(p => p.AdoptionStatus == status)
+            .Include(p => p.Owner)
+            .OrderByDescending(p => p.CreatedAt)
             .ToListAsync(cancellationToken);
     }
 }

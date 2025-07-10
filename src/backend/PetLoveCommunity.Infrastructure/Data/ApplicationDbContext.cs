@@ -194,10 +194,10 @@ public class ApplicationDbContext : DbContext
 
         // Pet indexes
         modelBuilder.Entity<Pet>()
-            .HasIndex(p => p.Status);
+            .HasIndex(p => p.AdoptionStatus);
 
         modelBuilder.Entity<Pet>()
-            .HasIndex(p => p.Type);
+            .HasIndex(p => p.PetType);
 
         modelBuilder.Entity<Pet>()
             .HasIndex(p => p.OwnerId);

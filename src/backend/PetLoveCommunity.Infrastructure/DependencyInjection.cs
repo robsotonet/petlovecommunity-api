@@ -5,6 +5,7 @@ using PetLoveCommunity.Application.Configuration;
 using PetLoveCommunity.Domain.Interfaces;
 using PetLoveCommunity.Infrastructure.Data;
 using PetLoveCommunity.Infrastructure.Repositories;
+using PetLoveCommunity.Infrastructure.Services;
 
 namespace PetLoveCommunity.Infrastructure;
 
@@ -46,6 +47,9 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPetRepository, PetRepository>();
+
+        // Register services
+        services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
 
         return services;
     }

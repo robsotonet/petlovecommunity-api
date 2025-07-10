@@ -8,6 +8,6 @@ public interface IPetRepository : IRepository<Pet>
     Task<IEnumerable<Pet>> GetPetsByOwnerAsync(Guid ownerId, CancellationToken cancellationToken = default);
     Task<IEnumerable<Pet>> GetPetsByTypeAsync(PetType type, CancellationToken cancellationToken = default);
     Task<Pet?> GetWithPhotosAsync(Guid petId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Pet>> SearchPetsAsync(string searchTerm, PetType? type = null, PetSize? size = null, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Pet>> GetExpiredListingsAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Pet>> SearchPetsAsync(string searchTerm, PetType? type = null, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Pet>> GetPetsByStatusAsync(AdoptionStatus status, CancellationToken cancellationToken = default);
 }

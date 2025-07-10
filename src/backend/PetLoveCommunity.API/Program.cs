@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using PetLoveCommunity.Application.Configuration;
 using PetLoveCommunity.API.Services;
 using PetLoveCommunity.Infrastructure;
+using PetLoveCommunity.Infrastructure.Services;
+using PetLoveCommunity.Application;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +43,9 @@ builder.Services.AddSingleton<IDatabaseAdminCredentials>(provider =>
 // Register services
 builder.Services.AddSingleton<IConfigurationValidator, ConfigurationValidator>();
 builder.Services.AddSingleton<IDatabaseConnectionService, DatabaseConnectionService>();
+
+// Add Application services
+builder.Services.AddApplication();
 
 // Add Infrastructure services
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -95,9 +100,20 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Configure static file serving
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Seed the database in development
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var seeder = scope.ServiceProvider.GetRequiredService<IDatabaseSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.Run();

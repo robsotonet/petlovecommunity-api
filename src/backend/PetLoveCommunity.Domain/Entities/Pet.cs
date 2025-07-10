@@ -6,65 +6,41 @@ namespace PetLoveCommunity.Domain.Entities;
 public class Pet : BaseEntity
 {
     [Required]
-    [StringLength(100)]
+    [StringLength(30)]
     public string Name { get; set; } = string.Empty;
 
     [Required]
-    public PetType Type { get; set; }
+    public PetType PetType { get; set; }
 
     [Required]
-    [StringLength(100)]
+    [StringLength(50)]
     public string Breed { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(30)]
+    public string Image { get; set; } = string.Empty;
+
+    [Required]
+    public DateTime DateOfBirth { get; set; }
+
+    [Required]
+    public decimal Price { get; set; } = 0;
+
+    [Required]
+    [StringLength(250)]
+    public string Description { get; set; } = string.Empty;
 
     [Required]
     public PetGender Gender { get; set; }
 
     [Required]
-    public int Age { get; set; }
+    public AdoptionStatus AdoptionStatus { get; set; } = AdoptionStatus.Available;
 
     [Required]
-    public PetSize Size { get; set; }
+    public bool IsActive { get; set; } = true;
 
     [Required]
-    [StringLength(50)]
-    public string Color { get; set; } = string.Empty;
-
-    [StringLength(1000)]
-    public string? Description { get; set; }
-
-    [Required]
-    public PetStatus Status { get; set; } = PetStatus.Available;
-
-    [Required]
-    public bool IsVaccinated { get; set; } = false;
-
-    [Required]
-    public bool IsSpayedNeutered { get; set; } = false;
-
-    [Required]
-    public bool IsHouseTrained { get; set; } = false;
-
-    [Required]
-    public bool IsGoodWithKids { get; set; } = false;
-
-    [Required]
-    public bool IsGoodWithPets { get; set; } = false;
-
-    [Required]
-    public decimal AdoptionFee { get; set; } = 0;
-
-    [StringLength(200)]
-    public string? Location { get; set; }
-
-    [StringLength(255)]
-    public string? PrimaryPhotoUrl { get; set; }
-
-    [StringLength(500)]
-    public string? SpecialNeeds { get; set; }
-
-    public DateTime? AdoptedAt { get; set; }
-
-    public DateTime ExpiresAt { get; set; } = DateTime.UtcNow.AddDays(90);
+    public int Views { get; set; } = 0;
 
     // Foreign keys
     [Required]
@@ -161,16 +137,7 @@ public enum PetGender
     Unknown = 2
 }
 
-public enum PetSize
-{
-    ExtraSmall = 0,
-    Small = 1,
-    Medium = 2,
-    Large = 3,
-    ExtraLarge = 4
-}
-
-public enum PetStatus
+public enum AdoptionStatus
 {
     Available = 0,
     Pending = 1,

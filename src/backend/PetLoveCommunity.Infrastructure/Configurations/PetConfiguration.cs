@@ -12,47 +12,44 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
 
         builder.Property(p => p.Name)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(30);
 
-        builder.Property(p => p.Type)
+        builder.Property(p => p.PetType)
             .IsRequired()
             .HasConversion<int>();
 
         builder.Property(p => p.Breed)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(50);
+
+        builder.Property(p => p.Image)
+            .IsRequired()
+            .HasMaxLength(30);
+
+        builder.Property(p => p.DateOfBirth)
+            .IsRequired();
+
+        builder.Property(p => p.Price)
+            .IsRequired()
+            .HasColumnType("decimal(18,2)");
+
+        builder.Property(p => p.Description)
+            .IsRequired()
+            .HasMaxLength(250);
 
         builder.Property(p => p.Gender)
             .IsRequired()
             .HasConversion<int>();
 
-        builder.Property(p => p.Size)
+        builder.Property(p => p.AdoptionStatus)
             .IsRequired()
             .HasConversion<int>();
 
-        builder.Property(p => p.Color)
-            .IsRequired()
-            .HasMaxLength(50);
+        builder.Property(p => p.IsActive)
+            .IsRequired();
 
-        builder.Property(p => p.Description)
-            .HasMaxLength(1000);
-
-        builder.Property(p => p.Status)
-            .IsRequired()
-            .HasConversion<int>();
-
-        builder.Property(p => p.AdoptionFee)
-            .IsRequired()
-            .HasColumnType("decimal(18,2)");
-
-        builder.Property(p => p.Location)
-            .HasMaxLength(200);
-
-        builder.Property(p => p.PrimaryPhotoUrl)
-            .HasMaxLength(255);
-
-        builder.Property(p => p.SpecialNeeds)
-            .HasMaxLength(500);
+        builder.Property(p => p.Views)
+            .IsRequired();
 
         // Relationships
         builder.HasOne(p => p.Owner)
@@ -66,12 +63,13 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
             .OnDelete(DeleteBehavior.SetNull);
 
         // Indexes
-        builder.HasIndex(p => p.Status);
-        builder.HasIndex(p => p.Type);
+        builder.HasIndex(p => p.AdoptionStatus);
+        builder.HasIndex(p => p.PetType);
         builder.HasIndex(p => p.OwnerId);
         builder.HasIndex(p => p.AdoptedById);
         builder.HasIndex(p => p.CreatedAt);
-        builder.HasIndex(p => p.ExpiresAt);
+        builder.HasIndex(p => p.IsActive);
+        builder.HasIndex(p => p.Views);
     }
 }
 
