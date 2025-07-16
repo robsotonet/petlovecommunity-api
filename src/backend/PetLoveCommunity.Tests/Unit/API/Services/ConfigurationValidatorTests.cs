@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Moq;
-using PetLoveCommunity.Application.Configuration;
+using PetLoveCommunity.API.Configuration;
 using PetLoveCommunity.API.Services;
 using System.ComponentModel.DataAnnotations;
 
