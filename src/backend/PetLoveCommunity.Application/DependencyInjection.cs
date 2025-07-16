@@ -11,6 +11,10 @@ public static class DependencyInjection
         // Register application services
         services.AddScoped<IPetService, PetService>();
         services.AddScoped<IAppConfig, AppConfig>();
+        
+        // Register authentication services
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         return services;
     }

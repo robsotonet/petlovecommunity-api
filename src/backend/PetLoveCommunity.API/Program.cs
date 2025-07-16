@@ -6,6 +6,7 @@ using PetLoveCommunity.API.Services;
 using PetLoveCommunity.Infrastructure;
 using PetLoveCommunity.Infrastructure.Services;
 using PetLoveCommunity.Application;
+using PetLoveCommunity.API.Middleware;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,11 +22,11 @@ if (builder.Environment.IsDevelopment())
 }
 
 // Configure JWT settings
-var jwtSettings = new JwtSettings();
-builder.Configuration.GetSection(JwtSettings.SectionName).Bind(jwtSettings);
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SectionName));
-builder.Services.AddSingleton<IJwtSettings>(provider => 
-    provider.GetRequiredService<IOptions<JwtSettings>>().Value);
+var jwtSettings = new PetLoveCommunity.Application.Configuration.JwtSettings();
+builder.Configuration.GetSection(PetLoveCommunity.Application.Configuration.JwtSettings.SectionName).Bind(jwtSettings);
+builder.Services.Configure<PetLoveCommunity.Application.Configuration.JwtSettings>(builder.Configuration.GetSection(PetLoveCommunity.Application.Configuration.JwtSettings.SectionName));
+builder.Services.AddSingleton<PetLoveCommunity.Application.Configuration.IJwtSettings>(provider => 
+    provider.GetRequiredService<IOptions<PetLoveCommunity.Application.Configuration.JwtSettings>>().Value);
 
 // Configure Database settings
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection(DatabaseSettings.SectionName));
@@ -80,15 +81,19 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Add correlation ID middleware early in the pipeline
+app.UseCorrelationId();
+
 // Add request logging middleware for debugging
 if (app.Environment.IsDevelopment())
 {
     app.Use(async (context, next) =>
     {
         var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        logger.LogDebug("Request: {Method} {Path}", context.Request.Method, context.Request.Path);
+        var correlationId = context.Items["CorrelationId"]?.ToString() ?? "Unknown";
+        logger.LogDebug("CorrelationId: {CorrelationId} - Request: {Method} {Path}", correlationId, context.Request.Method, context.Request.Path);
         await next();
-        logger.LogDebug("Response: {StatusCode}", context.Response.StatusCode);
+        logger.LogDebug("CorrelationId: {CorrelationId} - Response: {StatusCode}", correlationId, context.Response.StatusCode);
     });
 }
 

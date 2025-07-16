@@ -46,8 +46,15 @@ public class DatabaseSettings : IDatabaseSettings
     public string SslMode { get; init; } = "Prefer";
     
     /// <summary>
-    /// Whether to include error details in connection strings.
+    /// Whether to include detailed error information and sensitive data logging in Entity Framework.
+    /// This setting controls EF Core's EnableSensitiveDataLogging() and EnableDetailedErrors() options,
+    /// not the PostgreSQL connection string itself.
     /// </summary>
+    /// <remarks>
+    /// This property is used in the dependency injection configuration to enable detailed error
+    /// reporting and sensitive data logging for debugging purposes. It should be set to false
+    /// in production environments to avoid exposing sensitive information in logs.
+    /// </remarks>
     public bool IncludeErrorDetail { get; init; } = true;
     
     /// <summary>

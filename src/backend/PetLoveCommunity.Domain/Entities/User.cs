@@ -1,9 +1,11 @@
 using PetLoveCommunity.Domain.Common;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetLoveCommunity.Domain.Entities;
 
-public class User : BaseEntity
+public class 
+    User : BaseEntity
 {
     [Required]
     [StringLength(100)]
@@ -21,6 +23,13 @@ public class User : BaseEntity
     [Required]
     [StringLength(255)]
     public string PasswordHash { get; set; } = string.Empty;
+
+    [Required]
+    public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
+
+    // Temporary field for registration - not persisted to database
+    [NotMapped]
+    public string Password { get; set; } = string.Empty;
 
     [StringLength(20)]
     public string? PhoneNumber { get; set; }

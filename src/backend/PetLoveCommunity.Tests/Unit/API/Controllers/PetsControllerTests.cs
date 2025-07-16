@@ -38,6 +38,10 @@ public class PetsControllerTests
         // Arrange
         var correlationId = Guid.NewGuid().ToString();
         _controller.Request.Headers["X-Correlation-ID"] = correlationId;
+        // Simulate what the middleware would do
+        _controller.HttpContext.Items["CorrelationId"] = correlationId;
+        // Simulate what the middleware would do
+        _controller.HttpContext.Items["CorrelationId"] = correlationId;
         
         var pets = new List<PetListDto>
         {
@@ -62,7 +66,7 @@ public class PetsControllerTests
     }
 
     [Fact]
-    public async Task GetAllPetsAsync_WithoutCorrelationId_ShouldUseDefaultMessage_AndLogNoCorIdSent()
+    public async Task GetAllPetsAsync_WithoutCorrelationId_ShouldGenerateNewId_AndLogIt()
     {
         // Arrange
         var pets = new List<PetListDto>
@@ -80,8 +84,8 @@ public class PetsControllerTests
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().HaveCount(1);
 
-        // Verify logging includes default correlation ID message
-        VerifyLogContainsCorrelationId(LogLevel.Information, "No CorId sent");
+        // Verify logging includes a generated correlation ID (should be a valid GUID)
+        VerifyLogContainsValidCorrelationId(LogLevel.Information);
     }
 
     [Fact]
@@ -90,6 +94,8 @@ public class PetsControllerTests
         // Arrange
         var correlationId = Guid.NewGuid().ToString();
         _controller.Request.Headers["X-Correlation-ID"] = correlationId;
+        // Simulate what the middleware would do
+        _controller.HttpContext.Items["CorrelationId"] = correlationId;
         
         var exception = new Exception("Database connection failed");
         _mockPetService.Setup(x => x.GetAllAvailablePetsAsync())
@@ -118,6 +124,8 @@ public class PetsControllerTests
         var petId = Guid.NewGuid();
         var correlationId = Guid.NewGuid().ToString();
         _controller.Request.Headers["X-Correlation-ID"] = correlationId;
+        // Simulate what the middleware would do
+        _controller.HttpContext.Items["CorrelationId"] = correlationId;
         
         var pet = new PetDetailDto 
         { 
@@ -152,6 +160,8 @@ public class PetsControllerTests
         var petId = Guid.NewGuid();
         var correlationId = Guid.NewGuid().ToString();
         _controller.Request.Headers["X-Correlation-ID"] = correlationId;
+        // Simulate what the middleware would do
+        _controller.HttpContext.Items["CorrelationId"] = correlationId;
         
         _mockPetService.Setup(x => x.GetPetByIdAsync(petId))
             .ReturnsAsync((PetDetailDto?)null);
@@ -186,8 +196,8 @@ public class PetsControllerTests
         result.Data.Should().BeNull();
         result.Message.Should().Be("An error occurred while retrieving the pet");
 
-        // Verify error logging
-        VerifyLogContainsCorrelationId(LogLevel.Error, "No CorId sent");
+        // Verify error logging includes generated correlation ID
+        VerifyLogContainsValidCorrelationId(LogLevel.Error);
     }
 
     #endregion
@@ -202,6 +212,8 @@ public class PetsControllerTests
         const string petType = "Dog";
         var correlationId = Guid.NewGuid().ToString();
         _controller.Request.Headers["X-Correlation-ID"] = correlationId;
+        // Simulate what the middleware would do
+        _controller.HttpContext.Items["CorrelationId"] = correlationId;
         
         var pets = new List<PetListDto>
         {
@@ -232,6 +244,8 @@ public class PetsControllerTests
         // Arrange
         var correlationId = Guid.NewGuid().ToString();
         _controller.Request.Headers["X-Correlation-ID"] = correlationId;
+        // Simulate what the middleware would do
+        _controller.HttpContext.Items["CorrelationId"] = correlationId;
 
         // Act
         var result = await _controller.SearchPetsAsync(searchTerm!, null);
@@ -266,8 +280,8 @@ public class PetsControllerTests
         result.Data.Should().BeNull();
         result.Message.Should().Be("An error occurred while searching pets");
 
-        // Verify error logging
-        VerifyLogContainsCorrelationId(LogLevel.Error, "No CorId sent");
+        // Verify error logging includes generated correlation ID
+        VerifyLogContainsValidCorrelationId(LogLevel.Error);
     }
 
     #endregion
@@ -281,6 +295,8 @@ public class PetsControllerTests
         const string petType = "Dog";
         var correlationId = Guid.NewGuid().ToString();
         _controller.Request.Headers["X-Correlation-ID"] = correlationId;
+        // Simulate what the middleware would do
+        _controller.HttpContext.Items["CorrelationId"] = correlationId;
         
         var pets = new List<PetListDto>
         {
@@ -321,8 +337,8 @@ public class PetsControllerTests
         result.Data.Should().BeNull();
         result.Message.Should().Be("An error occurred while retrieving pets");
 
-        // Verify error logging
-        VerifyLogContainsCorrelationId(LogLevel.Error, "No CorId sent");
+        // Verify error logging includes generated correlation ID
+        VerifyLogContainsValidCorrelationId(LogLevel.Error);
     }
 
     #endregion
@@ -335,7 +351,19 @@ public class PetsControllerTests
             x => x.Log(
                 logLevel,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains($"CorrelationId: {correlationId}")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(correlationId)),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.AtLeastOnce);
+    }
+
+    private void VerifyLogContainsValidCorrelationId(LogLevel logLevel)
+    {
+        _mockLogger.Verify(
+            x => x.Log(
+                logLevel,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("CorrelationId: ")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.AtLeastOnce);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PetLoveCommunity.Application.DTOs;
 using PetLoveCommunity.Application.DTOs.Shared;
 using PetLoveCommunity.Application.Interfaces;
+using PetLoveCommunity.API.Extensions;
 
 namespace PetLoveCommunity.API.Controllers;
 
@@ -19,18 +20,12 @@ public class PetsController : ControllerBase
         _logger = logger;
     }
 
-    private string GetCorrelationId()
-    {
-        return Request.Headers.TryGetValue("X-Correlation-ID", out var correlationId) 
-            ? correlationId.ToString() 
-            : "No CorId sent";
-    }
 
     [HttpGet]
     [AllowAnonymous]
     public async Task<ApiResponse<PetListDto[]>> GetAllPetsAsync()
     {
-        var correlationId = GetCorrelationId();
+        var correlationId = this.GetCorrelationId();
         try
         {
             var pets = await _petService.GetAllAvailablePetsAsync();
@@ -48,7 +43,7 @@ public class PetsController : ControllerBase
     [AllowAnonymous]
     public async Task<ApiResponse<PetDetailDto?>> GetPetByIdAsync(Guid id)
     {
-        var correlationId = GetCorrelationId();
+        var correlationId = this.GetCorrelationId();
         try
         {
             var pet = await _petService.GetPetByIdAsync(id);
@@ -75,7 +70,7 @@ public class PetsController : ControllerBase
     [AllowAnonymous]
     public async Task<ApiResponse<PetListDto[]>> SearchPetsAsync([FromQuery] string q, [FromQuery] string? type = null)
     {
-        var correlationId = GetCorrelationId();
+        var correlationId = this.GetCorrelationId();
         try
         {
             if (string.IsNullOrWhiteSpace(q))
@@ -99,7 +94,7 @@ public class PetsController : ControllerBase
     [AllowAnonymous]
     public async Task<ApiResponse<PetListDto[]>> GetPetsByTypeAsync(string petType)
     {
-        var correlationId = GetCorrelationId();
+        var correlationId = this.GetCorrelationId();
         try
         {
             var pets = await _petService.GetPetsByTypeAsync(petType);

@@ -249,6 +249,110 @@ public class ApiResponseGenericTests
         deserialized.Message.Should().Be("Test error");
     }
 
+    [Fact]
+    public void Success_WithMessage_ShouldCreateSuccessfulResponse_WithDataAndMessage()
+    {
+        // Arrange
+        var testData = new TestData { Id = 1, Name = "Test" };
+        const string message = "Operation completed successfully";
+
+        // Act
+        var response = ApiResponse<TestData>.Success(testData, message);
+
+        // Assert
+        response.IsSuccess.Should().BeTrue();
+        response.Data.Should().Be(testData);
+        response.Message.Should().Be(message);
+    }
+
+    [Fact]
+    public void Failure_ShouldCreateFailedResponse_WithMessage()
+    {
+        // Arrange
+        const string errorMessage = "Operation failed";
+
+        // Act
+        var response = ApiResponse<TestData>.Failure(errorMessage);
+
+        // Assert
+        response.IsSuccess.Should().BeFalse();
+        response.Data.Should().BeNull();
+        response.Message.Should().Be(errorMessage);
+    }
+
+    [Fact]
+    public void Failure_WithNullMessage_ShouldCreateFailedResponse()
+    {
+        // Act
+        var response = ApiResponse<TestData>.Failure(null);
+
+        // Assert
+        response.IsSuccess.Should().BeFalse();
+        response.Data.Should().BeNull();
+        response.Message.Should().BeNull();
+    }
+
+    [Fact]
+    public void ValidationError_WithErrors_ShouldCreateFailedResponse_WithFormattedMessage()
+    {
+        // Arrange
+        var errors = new List<string> { "Email is required", "Password is too short", "Name cannot be empty" };
+
+        // Act
+        var response = ApiResponse<TestData>.ValidationError(errors);
+
+        // Assert
+        response.IsSuccess.Should().BeFalse();
+        response.Data.Should().BeNull();
+        response.Message.Should().Be("Validation failed: Email is required, Password is too short, Name cannot be empty");
+    }
+
+    [Fact]
+    public void ValidationError_WithSingleError_ShouldCreateFailedResponse_WithFormattedMessage()
+    {
+        // Arrange
+        var errors = new List<string> { "Email is required" };
+
+        // Act
+        var response = ApiResponse<TestData>.ValidationError(errors);
+
+        // Assert
+        response.IsSuccess.Should().BeFalse();
+        response.Data.Should().BeNull();
+        response.Message.Should().Be("Validation failed: Email is required");
+    }
+
+    [Fact]
+    public void ValidationError_WithEmptyErrors_ShouldCreateFailedResponse_WithBaseMessage()
+    {
+        // Arrange
+        var errors = new List<string>();
+
+        // Act
+        var response = ApiResponse<TestData>.ValidationError(errors);
+
+        // Assert
+        response.IsSuccess.Should().BeFalse();
+        response.Data.Should().BeNull();
+        response.Message.Should().Be("Validation failed: ");
+    }
+
+    [Fact]
+    public void Fail_And_Failure_ShouldBehaveSimilarly()
+    {
+        // Arrange
+        const string errorMessage = "Test error";
+
+        // Act
+        var failResponse = ApiResponse<TestData>.Fail(errorMessage);
+        var failureResponse = ApiResponse<TestData>.Failure(errorMessage);
+
+        // Assert
+        failResponse.IsSuccess.Should().Be(failureResponse.IsSuccess);
+        failResponse.Data.Should().Be(failureResponse.Data);
+        failResponse.Message.Should().Be(failureResponse.Message);
+    }
+
     private class TestData
     {
         public int Id { get; set; }

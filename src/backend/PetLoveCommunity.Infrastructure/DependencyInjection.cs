@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PetLoveCommunity.Application.Configuration;
+using PetLoveCommunity.Application.Interfaces;
 using PetLoveCommunity.Domain.Interfaces;
 using PetLoveCommunity.Infrastructure.Data;
 using PetLoveCommunity.Infrastructure.Repositories;
@@ -50,6 +51,7 @@ public static class DependencyInjection
 
         // Register services
         services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }

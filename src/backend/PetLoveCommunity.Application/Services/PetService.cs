@@ -118,7 +118,7 @@ public class PetService : IPetService
         }
     }
 
-    public async Task<PetDetailDto> CreatePetAsync(PetDetailDto petDto)
+    public Task<PetDetailDto> CreatePetAsync(PetDetailDto petDto)
     {
         try
         {
@@ -133,7 +133,7 @@ public class PetService : IPetService
         }
     }
 
-    public async Task<PetDetailDto> UpdatePetAsync(Guid id, PetDetailDto petDto)
+    public Task<PetDetailDto> UpdatePetAsync(Guid id, PetDetailDto petDto)
     {
         try
         {
@@ -148,7 +148,7 @@ public class PetService : IPetService
         }
     }
 
-    public async Task<bool> DeletePetAsync(Guid id)
+    public Task<bool> DeletePetAsync(Guid id)
     {
         try
         {
