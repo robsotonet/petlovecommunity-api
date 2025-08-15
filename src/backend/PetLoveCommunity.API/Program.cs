@@ -104,7 +104,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetLoveCommunity API v1"));
 }
 
-app.UseHttpsRedirection();
+// Only enforce HTTPS redirection in production for security
+// Allow HTTP in development for easier local testing
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
+
 
 // Configure static file serving
 app.UseStaticFiles();
