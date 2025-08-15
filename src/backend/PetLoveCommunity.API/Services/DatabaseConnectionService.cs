@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 using Npgsql;
-using PetLoveCommunity.API.Configuration;
+using PetLoveCommunity.Application.Configuration;
 
 namespace PetLoveCommunity.API.Services;
 
